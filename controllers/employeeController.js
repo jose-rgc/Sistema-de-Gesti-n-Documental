@@ -84,9 +84,6 @@ const getEmployeeById = async (req, res) => {
     }
 };
 
-
-
-
 // recuperar los datos del funcionario para GEstion de Documentos
 
 const getEmployeesWithDocuments = async (req, res) => {

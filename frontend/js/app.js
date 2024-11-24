@@ -363,6 +363,36 @@ const showEmployeeDocumentsTable = (employees) => {
 
     html += '</table>';
     content.innerHTML = html;
+    // Botones "Ver"
+    document.querySelectorAll('.view-docs').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const employeeId = e.target.getAttribute('data-id');
+            if (!employeeId) {
+                console.error('ID del funcionario no definido.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/employees/${employeeId}`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener los datos del funcionario.');
+                }
+
+                const employee = await response.json();
+                populateEmployeeDetails(employee); // Mostrar datos del empleado
+            } catch (error) {
+                console.error('Error al obtener los datos del funcionario:', error);
+                alert('No se pudieron cargar los datos del funcionario.');
+            }
+        });
+    });
+    
     // Asociar eventos a los botones de Subir Documentos
     document.querySelectorAll('.upload-docs').forEach(button => {
         button.addEventListener('click', async (e) => {
@@ -396,8 +426,43 @@ const showEmployeeDocumentsTable = (employees) => {
                 console.error('Error al obtener los documentos:', error);
             }
         });
-    });       
+    }); 
+          
       
+};
+const populateEmployeeDetails = (employee) => {
+    const content = document.getElementById('content');
+
+    const html = `
+        <h2>Datos del Funcionario</h2>
+        <form>
+            <label for="ci">Cédula de Identidad:</label>
+            <input type="text" id="ci" value="${employee.ci || ''}" disabled><br>
+
+            <label for="firstName">Nombres:</label>
+            <input type="text" id="firstName" value="${employee.firstName || ''}" disabled><br>
+
+            <label for="lastName">Apellidos:</label>
+            <input type="text" id="lastName" value="${employee.lastName || ''}" disabled><br>
+
+            <label for="phone">Teléfono:</label>
+            <input type="text" id="phone" value="${employee.phone || ''}" disabled><br>
+
+            <label for="position">Cargo:</label>
+            <input type="text" id="position" value="${employee.position || ''}" disabled><br>
+
+            <label for="unit">Unidad:</label>
+            <input type="text" id="unit" value="${employee.unit || ''}" disabled><br>
+
+            <label for="startDate">Fecha Inicio:</label>
+            <input type="date" id="startDate" value="${employee.startDate || ''}" disabled><br>
+
+            <label for="endDate">Fecha Fin:</label>
+            <input type="date" id="endDate" value="${employee.endDate || ''}" disabled><br>
+        </form>
+    `;
+
+    content.innerHTML = html;
 };
 
 // Mostrar formulario de subida de documentos (ahora solo con el mensaje "Bienvenido")cccx
