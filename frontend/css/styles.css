@@ -110,3 +110,127 @@ form#login-form button:hover {
 .btn {
     border-radius: 0.25rem;
 }
+/* Estilos para el formulario de datos del empleado */
+form {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form input[disabled] {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para la tabla de documentos */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
+table td a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+table td a:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para el botón "Generar Formulario" */
+#generate-form-button {
+    margin: 20px 0;
+    padding: 12px 30px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+#generate-form-button:hover {
+    background-color: #0056b3;
+}
+
+#generate-form-button:active {
+    background-color: #004085;
+}
+
+/* Estilos para los botones de "Ver" y "Subir Documentos" */
+.btn {
+    padding: 8px 16px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-sm {
+    font-size: 12px;
+    padding: 5px 10px;
+}
+/* Estilo para el botón "Generar Formulario" */
+#generate-form-button {
+    margin: 20px 0;
+    padding: 12px 30px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+#generate-form-button:hover {
+    background-color: #0056b3;
+}
+
+#generate-form-button:active {
+    background-color: #004085;
+}

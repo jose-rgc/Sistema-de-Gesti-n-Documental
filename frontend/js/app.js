@@ -421,33 +421,137 @@ const showEmployeeDocumentsTable = (employees) => {
     content.innerHTML = html;
     // Botones "Ver"
     document.querySelectorAll('.view-docs').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            const employeeId = e.target.getAttribute('data-id');
-            if (!employeeId) {
-                console.error('ID del funcionario no definido.');
-                return;
+    button.addEventListener('click', async (e) => {
+        const employeeId = e.target.getAttribute('data-id');
+        console.log('ID recibido:', employeeId);
+        
+        if (!employeeId) {
+            console.error('ID del funcionario no definido.');
+            return; // Evita continuar si no hay ID
+        }
+
+        try {
+            // Obtener datos personales del empleado
+            const response = await fetch(`http://localhost:5000/api/employees/${employeeId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos del funcionario.');
             }
 
-            try {
-                const response = await fetch(`http://localhost:5000/api/employees/${employeeId}`, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
+            const employee = await response.json();
 
-                if (!response.ok) {
-                    throw new Error('Error al obtener los datos del funcionario.');
-                }
+            // Obtener los documentos del empleado
+            const docsResponse = await fetch(`http://localhost:5000/api/documents/employee/${employeeId}`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
 
-                const employee = await response.json();
-                populateEmployeeDetails(employee); // Mostrar datos del empleado
-            } catch (error) {
-                console.error('Error al obtener los datos del funcionario:', error);
-                alert('No se pudieron cargar los datos del funcionario.');
+            if (!docsResponse.ok) {
+                throw new Error('Error al obtener los documentos del funcionario.');
             }
-        });
+
+            const docsData = await docsResponse.json(); // Asegúrate de que aquí usas docsData, no data
+            console.log('Documentos recibidos:', docsData); // Verifica la estructura de los datos recibidos
+
+            // Ahora pasamos los documentos correctamente a la función
+            populateEmployeeDetails(employee, docsData.documents); // Usamos docsData.documents
+        } catch (error) {
+            console.error('Error al obtener los datos o documentos del funcionario:', error);
+            alert('No se pudieron cargar los datos del funcionario o sus documentos.');
+        }
     });
+});
+const populateEmployeeDetails = (employee, documents) => {
+    const content = document.getElementById('content');
+    let html = `
+        <h2>Datos del Funcionario</h2>
+        <form>
+            <label for="ci">Cédula de Identidad:</label>
+            <input type="text" id="ci" value="${employee.ci || ''}" disabled><br>
+
+            <label for="firstName">Nombres:</label>
+            <input type="text" id="firstName" value="${employee.firstName || ''}" disabled><br>
+
+            <label for="lastName">Apellidos:</label>
+            <input type="text" id="lastName" value="${employee.lastName || ''}" disabled><br>
+
+            <label for="phone">Teléfono:</label>
+            <input type="text" id="phone" value="${employee.phone || ''}" disabled><br>
+
+            <label for="position">Cargo:</label>
+            <input type="text" id="position" value="${employee.position || ''}" disabled><br>
+
+            <label for="unit">Unidad:</label>
+            <input type="text" id="unit" value="${employee.unit || ''}" disabled><br>
+
+            <label for="startDate">Fecha Inicio:</label>
+            <input type="date" id="startDate" value="${employee.startDate || ''}" disabled><br>
+
+            <label for="endDate">Fecha Fin:</label>
+            <input type="date" id="endDate" value="${employee.endDate || ''}" disabled><br>
+        </form>
+
+        <h3>Documentos del Empleado</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Estado</th>
+                    <th>Archivo</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Verifica si documents tiene algún dato
+    if (documents && Object.keys(documents).length > 0) {
+        // Convertir el objeto 'documents' a un array de entradas (clave-valor)
+        const documentsList = Object.entries(documents);
+
+        // Recorrer los documentos y agregar a la tabla
+        documentsList.forEach(([docName, docDetails]) => {
+            html += `
+                <tr>
+                    <td><strong>${docName}</strong></td>
+                    <td>${docDetails.status}</td>
+                    <td>${docDetails.fileName ? `<a href="/uploads/${encodeURIComponent(docDetails.fileName)}" target="_blank">Ver Archivo</a>` : 'No Subido'}</td>
+                </tr>
+            `;
+        });
+    } else {
+        html += `
+            <tr>
+                <td colspan="3">No se han encontrado documentos para este empleado.</td>
+            </tr>
+        `;
+    }
+
+    html += `
+            </tbody>
+        </table>
+        <!-- Botón para generar formulario -->
+            <div class="form-group">
+                <button class="btn btn-primary btn-lg" id="generate-form-button">Generar Formulario</button>
+            </div>
+    `;
+    
+    content.innerHTML = html;
+
+    //BOton Generar Un Informe
+    
+    document.getElementById('generate-form-button').addEventListener('click', () => {
+        alert('Formulario generado!');
+        // Aquí puedes agregar más lógica para generar un formulario en PDF o lo que necesites.
+    });
+};
+
     
     // Asociar eventos a los botones de Subir Documentosxxx
     document.querySelectorAll('.upload-docs').forEach(button => {
@@ -484,41 +588,6 @@ const showEmployeeDocumentsTable = (employees) => {
           
       
 };
-const populateEmployeeDetails = (employee) => {
-    const content = document.getElementById('content');
-
-    const html = `
-        <h2>Datos del Funcionario</h2>
-        <form>
-            <label for="ci">Cédula de Identidad:</label>
-            <input type="text" id="ci" value="${employee.ci || ''}" disabled><br>
-
-            <label for="firstName">Nombres:</label>
-            <input type="text" id="firstName" value="${employee.firstName || ''}" disabled><br>
-
-            <label for="lastName">Apellidos:</label>
-            <input type="text" id="lastName" value="${employee.lastName || ''}" disabled><br>
-
-            <label for="phone">Teléfono:</label>
-            <input type="text" id="phone" value="${employee.phone || ''}" disabled><br>
-
-            <label for="position">Cargo:</label>
-            <input type="text" id="position" value="${employee.position || ''}" disabled><br>
-
-            <label for="unit">Unidad:</label>
-            <input type="text" id="unit" value="${employee.unit || ''}" disabled><br>
-
-            <label for="startDate">Fecha Inicio:</label>
-            <input type="date" id="startDate" value="${employee.startDate || ''}" disabled><br>
-
-            <label for="endDate">Fecha Fin:</label>
-            <input type="date" id="endDate" value="${employee.endDate || ''}" disabled><br>
-        </form>
-    `;
-
-    content.innerHTML = html;
-};
-
 // Mostrar formulario de subida de documentos (ahora solo con el mensaje "Bienvenido")xxxx
 const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, documentsStatus) => {
     console.log('Formulario de subida para el empleado ID:', employeeId); // Depuración

@@ -77,6 +77,7 @@ const getDocumentsByEmployee = async (req, res) => {
     try {
         // Verificar que el funcionario exista
         const employee = await Employee.findById(employeeId);
+        console.log(employee.documents);  // Verifica que los documentos estén correctamente guardados
         if (!employee) {
             return res.status(404).json({ message: 'Funcionario no encontrado' });
         }
@@ -88,6 +89,7 @@ const getDocumentsByEmployee = async (req, res) => {
                 fileName: status === 'Presento' ? `${docName}-file.pdf` : ''  // Aquí agregamos el nombre del archivo (puede ser un PDF)
             };
         });
+        console.log('Documentos:', documentsObject);  // Verifica que los documentos estén en el formato esperado
         res.status(200).json({ documents: documentsObject });
     } catch (error) {
         console.error('Error al obtener los documentos:', error);
