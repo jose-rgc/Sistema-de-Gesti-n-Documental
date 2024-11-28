@@ -20,25 +20,37 @@ document.getElementById('employees-link').addEventListener('click', async () => 
         content.innerHTML = `<p style="color: red;">No tienes permiso para acceder a esta sección</p>`;
         return;
     }
-
     content.innerHTML = `<p>Cargando funcionarios...</p>`;
-
     try {
         const response = await fetch('http://localhost:5000/api/employees', {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`, // Enviar el token
             },
-        });
-        
+        });     
         const employees = await response.json();
-
+//cambiar xxxx
         if (response.ok) {
-            let html = '<h2>Lista de Funcionarios</h2>';
-            html += `<button id="add-employee-btn">Registrar Nuevo Funcionario</button>`;
-            html += '<table border="1">';
-            html += '<tr><th>CI</th><th>Nombre</th><th>Apellido</th><th>Unidad</th><th>Cargo</th><th>Acciones</th></tr>';
-
+            let html = `
+        <div class="container mt-4">
+            <h2 class="text-center mb-4">Lista de Funcionarios</h2>
+            <div class="text-end mb-3">
+                <button id="add-employee-btn" class="btn btn-success">Registrar Nuevo Funcionario</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>CI</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Unidad</th>
+                            <th>Cargo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
             employees.forEach(employee => {
                 html += `
                     <tr>
@@ -48,8 +60,10 @@ document.getElementById('employees-link').addEventListener('click', async () => 
                         <td>${employee.unit}</td>
                         <td>${employee.position}</td>
                         <td>
-                            <button class="edit-employee" data-id="${employee._id}">Editar</button>
-                        </td>
+                    <button class="btn btn-warning btn-sm edit-employee" data-id="${employee._id}">
+                        <i class="bi bi-pencil-square"></i> Editar
+                    </button>
+                </td>
                     </tr>
                 `;
             });
@@ -84,36 +98,55 @@ const showEmployeeRegistrationForm = () => {
     const content = document.getElementById('content');
 
     content.innerHTML = `
-        <h2>Registrar Nuevo Funcionario</h2>
-        <form id="register-employee-form">
-            <label for="ci">Cédula de Identidad:</label>
-            <input type="text" id="ci" name="ci" required><br><br>
-
-            <label for="firstName">Nombres:</label>
-            <input type="text" id="firstName" name="firstName" required><br><br>
-
-            <label for="lastName">Apellidos:</label>
-            <input type="text" id="lastName" name="lastName" required><br><br>
-
-            <label for="phone">Teléfono:</label>
-            <input type="text" id="phone" name="phone"><br><br>
-
-            <label for="position">Cargo:</label>
-            <input type="text" id="position" name="position" required><br><br>
-
-            <label for="unit">Unidad:</label>
-            <input type="text" id="unit" name="unit" required><br><br>
-
-            <label for="startDate">Fecha Inicio:</label>
-            <input type="date" id="startDate" name="startDate" required><br><br>
-
-            <label for="endDate">Fecha Fin:</label>
-            <input type="date" id="endDate" name="endDate"><br><br>
-
-            <button type="submit">Registrar Funcionario</button>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Registrar Nuevo Funcionario</h2>
+        <form id="register-employee-form" class="needs-validation" novalidate>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="ci" class="form-label">Cédula de Identidad:</label>
+                    <input type="text" class="form-control" id="ci" name="ci" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Teléfono:</label>
+                    <input type="text" class="form-control" id="phone" name="phone">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">Nombres:</label>
+                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Apellidos:</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="position" class="form-label">Cargo:</label>
+                    <input type="text" class="form-control" id="position" name="position" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="unit" class="form-label">Unidad:</label>
+                    <input type="text" class="form-control" id="unit" name="unit" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="startDate" class="form-label">Fecha Inicio:</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="endDate" class="form-label">Fecha Fin:</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Registrar Funcionario</button>
         </form>
-        <div id="response-message"></div>
-    `;
+        <div id="response-message" class="mt-3"></div>
+    </div>
+`;
+// Agrega funcionalidad para enviar datos
 
     const form = document.getElementById('register-employee-form');
     form.addEventListener('submit', async (event) => {
@@ -144,14 +177,14 @@ const showEmployeeRegistrationForm = () => {
             const messageDiv = document.getElementById('response-message');
 
             if (response.ok) {
-                messageDiv.innerHTML = `<p style="color: green;">Funcionario registrado con éxito</p>`;
+                messageDiv.innerHTML = `<div class="alert alert-success">Funcionario registrado con éxito</div>`;
                 document.getElementById('employees-link').click(); // Recargar la lista de funcionarios
             } else {
-                messageDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+                messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message}</div>`;
             }
         } catch (error) {
             const messageDiv = document.getElementById('response-message');
-            messageDiv.innerHTML = `<p style="color: red;">Error al registrar el funcionario.</p>`;
+            messageDiv.innerHTML = `<div class="alert alert-danger">Error al registrar el funcionario.</div>`;
         }
     });
 };
@@ -175,35 +208,53 @@ const showEmployeeEditForm = async (employeeId) => {
         if (response.ok) {
             // Mostrar el formulario de edición con los datos actuales
             content.innerHTML = `
-                <h2>Editar Funcionario</h2>
-                <form id="edit-employee-form">
-                    <label for="ci">Cédula de Identidad:</label>
-                    <input type="text" id="ci" name="ci" value="${employee.ci}" required><br><br>
-
-                    <label for="firstName">Nombres:</label>
-                    <input type="text" id="firstName" name="firstName" value="${employee.firstName}" required><br><br>
-
-                    <label for="lastName">Apellidos:</label>
-                    <input type="text" id="lastName" name="lastName" value="${employee.lastName}" required><br><br>
-
-                    <label for="phone">Teléfono:</label>
-                    <input type="text" id="phone" name="phone" value="${employee.phone}"><br><br>
-
-                    <label for="position">Cargo:</label>
-                    <input type="text" id="position" name="position" value="${employee.position}" required><br><br>
-
-                    <label for="unit">Unidad:</label>
-                    <input type="text" id="unit" name="unit" value="${employee.unit}" required><br><br>
-
-                    <label for="startDate">Fecha Inicio:</label>
-                    <input type="date" id="startDate" name="startDate" value="${employee.startDate.split('T')[0]}" required><br><br>
-
-                    <label for="endDate">Fecha Fin:</label>
-                    <input type="date" id="endDate" name="endDate" value="${employee.endDate ? employee.endDate.split('T')[0] : ''}"><br><br>
-
-                    <button type="submit">Guardar Cambios</button>
-                </form>
-                <div id="response-message"></div>
+                <div class="container mt-4">
+                    <h2 class="text-center mb-4">Editar Funcionario</h2>
+                    <form id="edit-employee-form" class="needs-validation" novalidate>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="ci" class="form-label">Cédula de Identidad:</label>
+                                <input type="text" class="form-control" id="ci" name="ci" value="${employee.ci}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Teléfono:</label>
+                                <input type="text" class="form-control" id="phone" name="phone" value="${employee.phone}">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">Nombres:</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" value="${employee.firstName}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Apellidos:</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" value="${employee.lastName}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="position" class="form-label">Cargo:</label>
+                                <input type="text" class="form-control" id="position" name="position" value="${employee.position}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="unit" class="form-label">Unidad:</label>
+                                <input type="text" class="form-control" id="unit" name="unit" value="${employee.unit}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Fecha Inicio:</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" value="${employee.startDate.split('T')[0]}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">Fecha Fin:</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" value="${employee.endDate ? employee.endDate.split('T')[0] : ''}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                    </form>
+                    <div id="response-message" class="mt-3"></div>
+                </div>
             `;
 
             // Manejar el envío del formulario de edición
@@ -236,21 +287,21 @@ const showEmployeeEditForm = async (employeeId) => {
                     const messageDiv = document.getElementById('response-message');
 
                     if (updateResponse.ok) {
-                        messageDiv.innerHTML = `<p style="color: green;">Funcionario actualizado con éxito</p>`;
+                        messageDiv.innerHTML = `<div class="alert alert-success">Funcionario actualizado con éxito</div>`;
                         document.getElementById('employees-link').click(); // Volver a la lista de funcionarios
                     } else {
-                        messageDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+                        messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message}</div>`;
                     }
                 } catch (error) {
                     const messageDiv = document.getElementById('response-message');
-                    messageDiv.innerHTML = `<p style="color: red;">Error al actualizar el funcionario.</p>`;
+                    messageDiv.innerHTML = `<div class="alert alert-danger">Error al actualizar el funcionario.</div>`;
                 }
             });
         } else {
-            content.innerHTML = `<p style="color: red;">Error al cargar los datos del funcionario</p>`;
+            content.innerHTML = `<div class="alert alert-danger">Error al cargar los datos del funcionario.</div>`;
         }
     } catch (error) {
-        content.innerHTML = `<p style="color: red;">Error al cargar los datos del funcionario</p>`;
+        content.innerHTML = `<div class="alert alert-danger">Error al conectar con el servidor.</div>`;
     }
 };
 
@@ -264,13 +315,13 @@ document.getElementById('documents-link').addEventListener('click', async () => 
 
     // Verificar rol
     if (!verifyRole(['developer', 'admin', 'archiver'])) {
-        content.innerHTML = `<p style="color: red;">No tienes permiso para acceder a esta sección</p>`;
+        content.innerHTML = `
+            <div class="alert alert-danger">No tienes permiso para acceder a esta sección</div>
+             `;
         return;
     }
-
     // Mostrar cargando
-    content.innerHTML = `<p>Cargando lista de funcionarios y documentos...</p>`;
-
+    content.innerHTML = `<div class="alert alert-info">Cargando lista de funcionarios y documentos...</div>`;
     try {
         // Llamar a la API para obtener los datos de los empleados y documentos
         const response = await fetch('http://localhost:5000/api/employees/list-with-documents', {
@@ -279,20 +330,17 @@ document.getElementById('documents-link').addEventListener('click', async () => 
                 Authorization: `Bearer ${localStorage.getItem('token')}`, // Token del usuario
             },
         });
-
         // Verificar si la respuesta es correcta
         if (!response.ok) {
             throw new Error('Error al cargar la lista de documentos');
         }
-
         // Obtener los datos de los empleados
         const employees = await response.json();
         console.log('Datos de empleados recibidos:', employees); // Verificar la estructura de los datos
-
         // Llamar a la función para mostrar la tabla con los documentos
         showEmployeeDocumentsTable(employees);
     } catch (error) {
-        content.innerHTML = `<p style="color: red;">Error al cargar la lista de documentos</p>`;
+        content.innerHTML = `<div class="alert alert-danger">Error al cargar la lista de documentos</div>`;
         console.error('Error:', error);
     }
 });
@@ -301,29 +349,33 @@ const showEmployeeDocumentsTable = (employees) => {
     const content = document.getElementById('content');
 
     let html = `
-        <h2>Gestión de Documentos</h2>
-        <table border="1">
-            <tr>
-                <th>CI</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Carnet de Identidad</th>
-                <th>Certificado de Nacimiento</th>
-                <th>Certificado de Matrimonio</th>
-                <th>Libreta Militar</th>
-                <th>Croquis de Domicilio</th>
-                <th>Curriculum</th>
-                <th>Titulo Provisión Nacional</th>
-                <th>Diploma Académico</th>
-                <th>Rejap</th>
-                <th>Cenvi</th>
-                <th>Declaración de Notaria</th>
-                <th>Certificado Médico</th>
-                <th>NIT</th>
-                <th>Declaración de Bienes y Rentas</th>
-                <th>Memorandums</th>
-                <th>Acciones</th>
-            </tr>
+        <div class="container mt-4">
+            <h2 class="text-center mb-4">Gestión de Documentos</h2>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>CI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Carnet de Identidad</th>
+                        <th>Certificado de Nacimiento</th>
+                        <th>Certificado de Matrimonio</th>
+                        <th>Libreta Militar</th>
+                        <th>Croquis de Domicilio</th>
+                        <th>Curriculum</th>
+                        <th>Titulo Provisión Nacional</th>
+                        <th>Diploma Académico</th>
+                        <th>Rejap</th>
+                        <th>Cenvi</th>
+                        <th>Declaración de Notaria</th>
+                        <th>Certificado Médico</th>
+                        <th>NIT</th>
+                        <th>Declaración de Bienes y Rentas</th>
+                        <th>Memorandums</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
     `;
 
     // Recorrer los empleados y mostrar sus documentos en las columnas correspondientes
@@ -350,8 +402,8 @@ const showEmployeeDocumentsTable = (employees) => {
                 <td>${employee.documents['Declaración de Bienes y Rentas'] || 'Pendiente'}</td>
                 <td>${employee.documents['Memorandums'] || 'Pendiente'}</td>
                 <td>
-                    <button class="view-docs" data-id="${employee._id}">Ver</button>
-                    <button class="upload-docs" 
+                    <button class="btn btn-info btn-sm view-docs" data-id="${employee._id}">Ver</button>
+                    <button class="btn btn-success btn-sm upload-docs" 
                     data-id="${employee._id}" 
                     data-name="${employee.firstName}" 
                     data-lastname="${employee.lastName}" 
@@ -361,7 +413,11 @@ const showEmployeeDocumentsTable = (employees) => {
         `;
     });
 
-    html += '</table>';
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
     content.innerHTML = html;
     // Botones "Ver"
     document.querySelectorAll('.view-docs').forEach(button => {
@@ -393,10 +449,9 @@ const showEmployeeDocumentsTable = (employees) => {
         });
     });
     
-    // Asociar eventos a los botones de Subir Documentos
+    // Asociar eventos a los botones de Subir Documentosxxx
     document.querySelectorAll('.upload-docs').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            
+        button.addEventListener('click', async (e) => {          
             const employeeId = e.target.getAttribute('data-id');
             const employeeName = e.target.getAttribute('data-name'); // Obtener el nombre del empleado
             const employeeLastName = e.target.getAttribute('data-lastname'); // Apellido del empleado
@@ -420,7 +475,6 @@ const showEmployeeDocumentsTable = (employees) => {
                 });
     
                 const employeeDocuments = await response.json();
-
             showUploadForm(employeeId,  employeeName, employeeLastName, employeeCi, employeeDocuments.documents );  // Llamar a la función modificada
             }catch (error) {
                 console.error('Error al obtener los documentos:', error);
@@ -465,11 +519,12 @@ const populateEmployeeDetails = (employee) => {
     content.innerHTML = html;
 };
 
-// Mostrar formulario de subida de documentos (ahora solo con el mensaje "Bienvenido")cccx
+// Mostrar formulario de subida de documentos (ahora solo con el mensaje "Bienvenido")xxxx
 const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, documentsStatus) => {
     console.log('Formulario de subida para el empleado ID:', employeeId); // Depuración
 
     const content = document.getElementById('content');
+    
 
     // Listado de documentos
     const documents = [
@@ -680,35 +735,35 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
     // Inicio de sesión
     document.getElementById('home-link').addEventListener('click', () =>{ 
         content.innerHTML = `
-            <h2>Iniciar Sesión</h2>
-            <form id="login-form">
-                <label for="email">Correo:</label>
-                <input type="email" id="email" name="email" required><br><br>
-
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required><br><br>
-
-                <button type="submit">Iniciar Sesión</button>
+                <h2 class="text-center mb-4 text-primary">Iniciar Sesión</h2>
+            <form id="login-form" class="bg-white p-4 rounded shadow">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo:</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña:</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
             </form>
-            <div id="response-message"></div>
+            <div id="response-message" class="mt-3"></div>
+        </div>
         `;
-
+     //Validacion del incio de sesion en el frontend   
         const form = document.getElementById('login-form');
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
-
             const credentials = {
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value,
             };
-
             try {
                 const response = await fetch('http://localhost:5000/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(credentials),
                 });
-
                 const result = await response.json();
                 const messageDiv = document.getElementById('response-message');
 
@@ -725,37 +780,44 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
             }
         });
     });
-//gestion de Modulo Usuario
+//Gestion del Modulo de Usuarios
     document.getElementById('users-link').addEventListener('click', async () => {
         const content = document.getElementById('content');
-    
         // Verificar el rol del usuario
         if (!['developer', 'admin'].includes(localStorage.getItem('role'))) {
             content.innerHTML = `<p style="color: red;">No tienes permiso para acceder a esta sección</p>`;
             return;
         }
-    
-        content.innerHTML = `<p>Cargando usuarios...</p>`;
-    
+        content.innerHTML = `<p>Cargando usuarios...</p>`;  
         try {
             const response = await fetch('http://localhost:5000/api/users', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`, // Enviar el token
                 },
-            });
-    
-            const users = await response.json();
-    
+            });   
+            const users = await response.json();   
             if (response.ok) {
-                let html = '<h2>Lista de Usuarios</h2><table border="1">';
-                // Mostrar botón "Registrar Usuario" solo para desarrolladores
-                if (localStorage.getItem('role') === 'developer') {
-                    html += `<button id="add-user-btn">Registrar Usuario</button>`;
-                }
-    
-                html += '<table border="1">';
-                html += '<tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Acciones</th></tr>';
+                let html = `
+                    <div class="container mt-4">
+                        <h2 class="text-center mb-4">Lista de Usuarios</h2>
+                             ${
+                                localStorage.getItem('role') === 'developer'
+                                    ? '<button id="add-user-btn" class="btn btn-success mb-3">Registrar Usuario</button>'
+                                    : ''
+                             }
+                            <table class="table table-striped table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                            <tbody>
+                `;
+
                 users.forEach(user => {
                     html += `
                         <tr>
@@ -763,13 +825,17 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                             <td>${user.email}</td>
                             <td>${user.role}</td>
                             <td>
-                                <button class="edit-user" data-id="${user._id}">Editar</button>
-                                <button class="delete-user" data-id="${user._id}">Eliminar</button>
+                                <button class="btn btn-primary btn-sm edit-user" data-id="${user._id}">Editar</button>
+                                <button class="btn btn-danger btn-sm delete-user" data-id="${user._id}">Eliminar</button>
                             </td>
                         </tr>
                     `;
                 });
-                html += '</table>';
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
                 content.innerHTML = html;
     
                 // Evento para registrar un nuevo usuario
@@ -778,8 +844,6 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                         showUserRegistrationForm();
                     });
                 }
-                
-    
                 // Añadir eventos para editar y eliminar
                 document.querySelectorAll('.edit-user').forEach(button => {
                     button.addEventListener('click', async (e) => {
@@ -787,7 +851,6 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                         console.log('ID del usuario a editar:', userId); // Agrega este log para verificar el ID
                         const content = document.getElementById('content');
                         content.innerHTML = `<p>Cargando datos del usuario...</p>`;
-                
                         try {
                             // Obtener los datos del usuario desde el backend
                             const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
@@ -796,31 +859,34 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                                 },
                             });
-                
                             const user = await response.json();
-                
                             if (response.ok) {
                                 // Mostrar el formulario de edición con los datos del usuario
                                 content.innerHTML = `
-                                    <h2>Editar Usuario</h2>
-                                    <form id="edit-user-form">
-                                        <label for="name">Nombre:</label>
-                                        <input type="text" id="name" name="name" value="${user.name}" required><br><br>
-                
-                                        <label for="email">Correo:</label>
-                                        <input type="email" id="email" name="email" value="${user.email}" required><br><br>
-                
-                                        <label for="role">Rol:</label>
-                                        <select id="role" name="role" required>
-                                            <option value="developer" ${user.role === 'developer' ? 'selected' : ''}>Developer</option>
-                                            <option value="director" ${user.role === 'director' ? 'selected' : ''}>Director</option>
-                                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-                                            <option value="archiver" ${user.role === 'archiver' ? 'selected' : ''}>Archiver</option>
-                                        </select><br><br>
-                
-                                        <button type="submit">Guardar Cambios</button>
-                                    </form>
-                                    <div id="response-message"></div>
+                                    <div class="container mt-4">
+                                        <h2 class="text-center mb-4">Editar Usuario</h2>
+                                        <form id="edit-user-form" class="needs-validation" novalidate>
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Nombre:</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="${user.name}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Correo Electrónico:</label>
+                                                <input type="email" class="form-control" id="email" name="email" value="${user.email}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="role" class="form-label">Rol:</label>
+                                                <select id="role" name="role" class="form-select" required>
+                                                    <option value="developer" ${user.role === 'developer' ? 'selected' : ''}>Developer</option>
+                                                    <option value="director" ${user.role === 'director' ? 'selected' : ''}>Director</option>
+                                                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                                                    <option value="archiver" ${user.role === 'archiver' ? 'selected' : ''}>Archiver</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+                                        </form>
+                                        <div id="response-message" class="mt-3"></div>
+                                    </div>
                                 `;
                 
                                 // Manejar el envío del formulario de edición
@@ -833,7 +899,7 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                                         email: document.getElementById('email').value,
                                         role: document.getElementById('role').value,
                                     };
-                
+
                                     try {
                                         // Enviar los datos actualizados al backend
                                         const updateResponse = await fetch(`http://localhost:5000/api/users/${userId}`, {
@@ -849,20 +915,20 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                                         const messageDiv = document.getElementById('response-message');
                 
                                         if (updateResponse.ok) {
-                                            messageDiv.innerHTML = `<p style="color: green;">Usuario actualizado con éxito</p>`;
+                                            messageDiv.innerHTML = `<div class="alert alert-success">Usuario actualizado con éxito</div>`;
                                         } else {
-                                            messageDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+                                            messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message}</div>`;
                                         }
                                     } catch (error) {
                                         const messageDiv = document.getElementById('response-message');
-                                        messageDiv.innerHTML = `<p style="color: red;">Error al actualizar el usuario.</p>`;
+                                        messageDiv.innerHTML = `<div class="alert alert-danger">Error al actualizar el usuario.</div>`;
                                     }
                                 });
                             } else {
-                                content.innerHTML = `<p style="color: red;">Error al cargar los datos del usuario</p>`;
+                                content.innerHTML = `<div class="alert alert-danger">Error al cargar los datos del usuario</div>`;
                             }
                         } catch (error) {
-                            content.innerHTML = `<p style="color: red;">Error al cargar los datos del usuario</p>`;
+                            content.innerHTML = `<div class="alert alert-danger">Error al conectar con el servidor</div>`;
                         }
                     });
                 });
@@ -905,41 +971,45 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
         const content = document.getElementById('content');
     
         content.innerHTML = `
-            <h2>Registrar Nuevo Usuario</h2>
-            <form id="register-user-form">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" name="name" required><br><br>
-    
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" id="email" name="email" required><br><br>
-    
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required><br><br>
-    
-                <label for="role">Rol:</label>
-                <select id="role" name="role" required>
-                    <option value="developer">Developer</option>
-                    <option value="director">Director</option>
-                    <option value="admin">Admin</option>
-                    <option value="archiver">Archiver</option>
-                </select><br><br>
-    
-                <button type="submit">Registrar Usuario</button>
+            <div class="container mt-4">
+            <h2 class="text-center mb-4">Registrar Nuevo Usuario</h2>
+            <form id="register-user-form" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Rol:</label>
+                    <select id="role" name="role" class="form-select" required>
+                        <option value="developer">Developer</option>
+                        <option value="director">Director</option>
+                        <option value="admin">Admin</option>
+                        <option value="archiver">Archiver</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Registrar Usuario</button>
             </form>
-            <div id="response-message"></div>
+            <div id="response-message" class="mt-3"></div>
+        </div>
         `;
-    // Función para mostrar el formulario de registro
+    // Agregar Nuevo Usuario
         const form = document.getElementById('register-user-form');
         form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-    
+            event.preventDefault(); 
             const newUser = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 password: document.getElementById('password').value,
                 role: document.getElementById('role').value,
-            };
-    
+            };    
             try {
                 const response = await fetch('http://localhost:5000/api/users/register', {
                     method: 'POST',
@@ -948,20 +1018,19 @@ const showUploadForm = (employeeId, employeeName, employeeLastName, employeeCi, 
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
                     body: JSON.stringify(newUser),
-                });
-    
+                });   
                 const result = await response.json();
                 const messageDiv = document.getElementById('response-message');
     
                 if (response.ok) {
-                    messageDiv.innerHTML = `<p style="color: green;">Usuario registrado con éxito</p>`;
+                    messageDiv.innerHTML = `<div class="alert alert-success">Usuario registrado con éxito</div>`;
                     document.getElementById('users-link').click(); // Volver a la lista de usuarios
                 } else {
-                    messageDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+                    messageDiv.innerHTML = `<div class="alert alert-danger">Error: ${result.message}</div>`;
                 }
             } catch (error) {
                 const messageDiv = document.getElementById('response-message');
-                messageDiv.innerHTML = `<p style="color: red;">Error al registrar el usuario.</p>`;
+                messageDiv.innerHTML = `<div class="alert alert-danger">Error al registrar el usuario.</div>`;
             }
         });
     };

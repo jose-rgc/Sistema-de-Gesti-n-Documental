@@ -41,7 +41,7 @@ const getEmployees = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener los funcionarios', error });
     }
 };
-// Actualizar un funcionario por ID
+// Editar un Funcionario
 const updateEmployee = async (req, res) => {
     const { id } = req.params;
     const { ci, firstName, lastName, phone, position, unit, startDate, endDate } = req.body;

@@ -49,3 +49,64 @@ footer {
     bottom: 0;
     width: 100%;
 }
+/* Estilo del formulario de inicio de sesión */
+form#login-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+form#login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0073e6;
+}
+form#login-form label {
+    font-weight: bold;
+}
+form#login-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+form#login-form button {
+    background: #0073e6;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    font-weight: bold;
+    cursor: pointer;
+}
+form#login-form button:hover {
+    background: #005bb5;
+}
+.container h2 {
+    font-weight: bold;
+    color: #0073e6;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.btn {
+    border-radius: 0.25rem;
+}
+.container h2 {
+    font-weight: bold;
+    color: #0073e6;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.btn {
+    border-radius: 0.25rem;
+}

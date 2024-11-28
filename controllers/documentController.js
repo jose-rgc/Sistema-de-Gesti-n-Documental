@@ -74,14 +74,12 @@ const updateEmployeeDocuments = async (req, res) => {
 // Controlador para obtener los documentos del empleado
 const getDocumentsByEmployee = async (req, res) => {
     const { employeeId } = req.params;
-
     try {
         // Verificar que el funcionario exista
         const employee = await Employee.findById(employeeId);
         if (!employee) {
             return res.status(404).json({ message: 'Funcionario no encontrado' });
         }
-
         // Convertir el Map de documentos en un objeto estándar
         const documentsObject = {};
         employee.documents.forEach((status, docName) => {
@@ -90,7 +88,6 @@ const getDocumentsByEmployee = async (req, res) => {
                 fileName: status === 'Presento' ? `${docName}-file.pdf` : ''  // Aquí agregamos el nombre del archivo (puede ser un PDF)
             };
         });
-
         res.status(200).json({ documents: documentsObject });
     } catch (error) {
         console.error('Error al obtener los documentos:', error);
