@@ -21,7 +21,13 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes); // Rutas de usuarios
 app.use('/api/employees', employeeRoutes); // Rutas de funcionarios
 app.use('/api/documents', documentRoutes); // Rutas de documentos
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('uploads', {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.pdf')) {
+            res.set('Content-Type', 'application/pdf');
+        }
+    }
+}));
 
 
 // Ruta de prueba (base)

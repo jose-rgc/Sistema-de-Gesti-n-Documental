@@ -5,7 +5,7 @@ const { protect, verifyRole } = require('../middlewares/authMiddleware');
 
 // Middleware para manejar la subida de archivos (asegúrate de tener multer configurado)
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Ruta donde se almacenarán los archivos
+const upload = require('../config/multerConfig');  // Asegúrate de que esta ruta sea correcta
 
 // Subir documentos (developer, admin y archiver)
 router.post(
@@ -37,7 +37,3 @@ router.put('/employee/:employeeId/documents', protect, verifyRole(['developer', 
 router.get('/employee/:employeeId', protect, verifyRole(['developer', 'director']), getDocumentsByEmployee);
 
 module.exports = router;
-
-
-
-

@@ -515,13 +515,15 @@ const populateEmployeeDetails = (employee, documents) => {
         // Convertir el objeto 'documents' a un array de entradas (clave-valor)
         const documentsList = Object.entries(documents);
 
-        // Recorrer los documentos y agregar a la tabla
+        // Recorrer los documentos y agregar a la tablaxxx
         documentsList.forEach(([docName, docDetails]) => {
             html += `
-                <tr>
+            <tr>
                     <td><strong>${docName}</strong></td>
                     <td>${docDetails.status}</td>
-                    <td>${docDetails.fileName ? `<a href="/uploads/${encodeURIComponent(docDetails.fileName)}" target="_blank">Ver Archivo</a>` : 'No Subido'}</td>
+                    <td>${docDetails.fileName ? 
+                        `<a href="/uploads/${encodeURIComponent(docDetails.fileName)}" target="_blank">${docDetails.fileName}</a>` : 
+                        'No Subido'}</td>
                 </tr>
             `;
         });
@@ -533,7 +535,7 @@ const populateEmployeeDetails = (employee, documents) => {
         `;
     }
 
-    html += `
+    html += `<
             </tbody>
         </table>
         <!-- Botón para generar formulario -->

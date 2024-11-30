@@ -106,5 +106,3 @@ const getDocumentsByEmployee = async (req, res) => {
 
 
 module.exports = { uploadDocument, getDocumentsByEmployee, updateEmployeeDocuments };
-
-

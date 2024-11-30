@@ -1,21 +1,33 @@
 const multer = require('multer');
+const path = require('path');
 
-// Configura Multer para guardar los archivos en la carpeta 'uploads'
+// Configuración del almacenamiento
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Ruta donde se guardarán los archivos
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Nombre único para evitar conflictos
-  }
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Carpeta donde se guardarán los archivos
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, `${uniqueSuffix}-${file.originalname}`); // Nombre único para cada archivo
+    },
 });
 
-const upload = multer({ storage: storage });
+// Configuración de Multer
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // Tamaño máximo del archivo: 5MB
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /pdf|doc|docx|jpg|jpeg|png/; // Tipos permitidos
+        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = fileTypes.test(file.mimetype);
 
-// Ruta para subir un archivo
-app.post('/upload', upload.single('document'), (req, res) => {
-  // Guarda información del archivo en la base de datos si es necesario
-  res.send('Archivo subido con éxito');
+        if (extname && mimetype) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Solo se permiten archivos de tipo PDF, DOC, DOCX, JPG, JPEG o PNG'));
+        }
+    },
 });
 
+module.exports = upload;
 
